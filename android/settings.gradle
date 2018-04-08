@@ -1,3 +1,6 @@
 rootProject.name = 'rn_watcher'
 
 include ':app'
+//common module
+include ':wso2net'
+project(':wso2net').projectDir = new File("network/library")

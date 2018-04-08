@@ -1,0 +1,3 @@
+[submodule "android/network"]
+	path = android/network
+	url = http://git.hollywant.com/Android/network.git
