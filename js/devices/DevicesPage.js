@@ -21,9 +21,11 @@ export default class DevicesPage extends Component {
             data: [],
             isLoading: false,
             searchTxt: '',
-
         }
-        this.loadData();
+        this.offset = 0;
+        this.pageSize = 10;
+        this.dataCount = 0;
+        this.data = [];
     }
 
     componentDidMount() {
@@ -42,9 +44,9 @@ export default class DevicesPage extends Component {
                 isLoading: true
             });
         }
-        NativeModules.netModule.loadDevices(0,25,"","").then((response) =>
+        NativeModules.netModule.log("loadData", "_that.offset" + _that.offset)
+        NativeModules.netModule.loadDevices(_that.offset, _that.pageSize, "", "").then((response) =>
             JSON.parse(response)
-
         ).catch((error) => {
             alert("catch" + error)
         }).then((responseData) => {
@@ -54,9 +56,15 @@ export default class DevicesPage extends Component {
                 })
                 return
             }
+            NativeModules.netModule.log("loadData", "responseData.count=" + responseData.count);
+            NativeModules.netModule.log("loadData", "responseData.devices.length=" + responseData.devices.length);
+            this.dataCount = responseData.count;
+            NativeModules.netModule.log("loadData", "this.offset=" + this.offset);
+            this.offset = this.offset + responseData.devices.length;
+            NativeModules.netModule.log("loadData", "after plus this.offset" + this.offset);
+            this.data = this.data.concat(responseData.devices);
             _that.setState({
-                data:responseData.devices,
-                dataSource: this.state.dataSource.cloneWithRows(responseData.devices),
+                dataSource: this.state.dataSource.cloneWithRows(this.data),
                 isLoading: false,
             })
 
@@ -68,7 +76,6 @@ export default class DevicesPage extends Component {
                 })
 
             });
-
 
 
         // let timestamp = Date.parse(new Date());
@@ -95,6 +102,7 @@ export default class DevicesPage extends Component {
     }
 
     onItemClick(url) {
+        alert(this.data.length)
         // this.props.navigator.push({
         // })
     }
@@ -116,7 +124,8 @@ export default class DevicesPage extends Component {
             }}>
                 <View style={[{flex: 1, flexDirection: 'row', padding: 5}, styles.card]} key={obj.id}>
                     <View style={{flex: 1, paddingLeft: 5}}>
-                        <Text style={{fontSize: 16}} numberOfLines={1}>{obj.properties[2].value}</Text>
+                        <Text style={{fontSize: 16}}
+                              numberOfLines={1}>{obj.properties[2].value + "-----" + obj.id}</Text>
                         <Text style={{fontSize: 8, marginTop: 5}}>{obj.enrolmentInfo.status}</Text></View>
                     <Image style={{width: 40, height: 40, resizeMode: 'center'}}
                            source={require('../../res/imgs/ic_no_pic.png')}/>
@@ -137,28 +146,44 @@ export default class DevicesPage extends Component {
                 backgroundColor: 'white',
             }} placeholder='请输入想要搜索的内容' numberOfLines={1} underlineColorAndroid="transparent"
                        value={this.state.searchTxt} onChangeText={this.getSearchTxt.bind(this)}/>
-            <View style={{alignItems:'center',justifyContent:'center',}}>
-                <Text style={{fontSize:20,color:'white' }} onPress={this.doSearch.bind(this)}>搜索</Text>
+            <View style={{alignItems: 'center', justifyContent: 'center',}}>
+                <Text style={{fontSize: 20, color: 'white'}} onPress={this.doSearch.bind(this)}>搜索</Text>
             </View>
         </View>
 
-        let listView = <View><ListView
+        let listView = <ListView
             dataSource={this.state.dataSource}
             enableEmptySections={true}
             renderRow={(data) => this._renderRow(data)}
+            onEndReached={() => {
+                NativeModules.netModule.log("onEndReached", "offset=" + this.offset + "--dataCount=" + this.dataCount)
+                if (this.offset < this.dataCount) {
+                    NativeModules.netModule.log("onEndReached", "this.offset=" + this.offset + "--this.dataCount=" + this.dataCount)
+                    this.loadData()
+                }
+            }}
+            onEndReachedThreshold={10}
             refreshControl={
                 <RefreshControl
                     refreshing={this.state.isLoading}
-                    onRefresh={() => this.loadData()}
+                    onRefresh={() => {
+                        this.offset = 0;
+                        this.data = [];
+
+                        this.loadData()
+                    }}
                     colors={['blue']}
                     tintColor={'blue'}
                     titleColor={'blue'}
                     title={'Loading'}
                 />}
-        /></View>
-        let emptyView = this.state.data.length === 0 ? <View style={{flex:1,alignItems:'center',justifyContent:'center'}}><Image source={require('../../res/imgs/ic_nodata.png')} style={{width:200,height:200,}}/><Text>暂时没有数据呐！</Text></View> : null;
+        />
+        let emptyView = this.data.length === 0 ?
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}><Image
+                source={require('../../res/imgs/ic_nodata.png')}
+                style={{width: 200, height: 200,}}/><Text>暂时没有数据呐！</Text></View> : null;
         return (
-            <View style={{flex: 1}}>
+            <View style={{flex: 1,marginBottom:50}}>
                 {searchView}
                 {listView}
                 {emptyView}

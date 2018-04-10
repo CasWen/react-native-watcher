@@ -119,6 +119,7 @@ public class NetModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void loadDevices(int offset, int limit, String name, String status, final Promise promise) {
+        Log.e(getName(), "loadDevices->onStart:" + offset+"-"+limit);
         WSONet.<DevicesResponse>get(ip + "/api/device-mgt/v1.0/devices?offset=" + offset + "&limit=" + limit + "&name=" + name + "&status=" + status).execute(new JsonCallback<DevicesResponse>() {
             @Override
             public void onSuccess(Response<DevicesResponse> response) {
@@ -139,5 +140,9 @@ public class NetModule extends ReactContextBaseJavaModule {
                 promise.reject(msg);
             }
         });
+    }
+    @ReactMethod
+    public void log(String tag,String log) {
+        Log.e("JS",tag+":"+log);
     }
 }
