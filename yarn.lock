@@ -4654,6 +4654,10 @@ react-native-deprecated-custom-components@^0.1.2:
     react-timer-mixin "^0.13.2"
     rebound "^0.0.13"
 
+react-native-flexi-radio-button@^0.2.2:
+  version "0.2.2"
+  resolved "http://registry.npm.taobao.org/react-native-flexi-radio-button/download/react-native-flexi-radio-button-0.2.2.tgz#a0180393c531ba3477722c6e42a31ceb1c11623b"
+
 react-native-tab-navigator@^0.3.4:
   version "0.3.4"
   resolved "http://registry.npm.taobao.org/react-native-tab-navigator/download/react-native-tab-navigator-0.3.4.tgz#54a18f1ad06a09d4a0de81ff00416bc1b760c960"

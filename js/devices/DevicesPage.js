@@ -10,6 +10,7 @@ import {
     TouchableOpacity,
     NativeModules,
 } from 'react-native';
+import {RadioGroup, RadioButton} from 'react-native-flexi-radio-button'
 
 export default class DevicesPage extends Component {
 
@@ -26,6 +27,7 @@ export default class DevicesPage extends Component {
         this.pageSize = 10;
         this.dataCount = 0;
         this.data = [];
+        this.deviceStatus='';
     }
 
     componentDidMount() {
@@ -34,10 +36,10 @@ export default class DevicesPage extends Component {
 
     loadData(shouldShowLoading) {
         let _that = this;
-        if (_that.state.searchTxt.length != 0) {
-            this.doSearch();
-            return;
-        }
+        // if (_that.state.searchTxt.length != 0) {
+        //     this.doSearch();
+        //     return;
+        // }
 
         if (shouldShowLoading) {
             _that.setState({
@@ -45,7 +47,7 @@ export default class DevicesPage extends Component {
             });
         }
         NativeModules.netModule.log("loadData", "_that.offset" + _that.offset)
-        NativeModules.netModule.loadDevices(_that.offset, _that.pageSize, "", "").then((response) =>
+        NativeModules.netModule.loadDevices(_that.offset, _that.pageSize, _that.state.searchTxt, _that.deviceStatus).then((response) =>
             JSON.parse(response)
         ).catch((error) => {
             alert("catch" + error)
@@ -114,6 +116,9 @@ export default class DevicesPage extends Component {
     }
 
     doSearch() {
+        this.offset = 0;
+        this.data = [];
+        this.loadData(true)
 
     }
 
@@ -125,7 +130,7 @@ export default class DevicesPage extends Component {
                 <View style={[{flex: 1, flexDirection: 'row', padding: 5}, styles.card]} key={obj.id}>
                     <View style={{flex: 1, paddingLeft: 5}}>
                         <Text style={{fontSize: 16}}
-                              numberOfLines={1}>{obj.properties[2].value + "-----" + obj.id}</Text>
+                              numberOfLines={1}>{obj.id+"---"+obj.properties[2].value + "---" + obj.name}</Text>
                         <Text style={{fontSize: 8, marginTop: 5}}>{obj.enrolmentInfo.status}</Text></View>
                     <Image style={{width: 40, height: 40, resizeMode: 'center'}}
                            source={require('../../res/imgs/ic_no_pic.png')}/>
@@ -134,7 +139,43 @@ export default class DevicesPage extends Component {
         )
     }
 
+    _onSelect(index,value){
+        this.deviceStatus=value;
+        this.offset = 0;
+        this.data = [];
+        this.loadData(true)
+    }
+
     render() {
+        let radioGroupView=<View>
+            <RadioGroup
+                onSelect = {(index, value) => this._onSelect(index, value)}
+                style={{flexDirection:'row',flexWrap:'wrap'}}
+                selectedIndex={0}
+            >
+                <RadioButton value={''} >
+                    <Text>全部</Text>
+                </RadioButton>
+
+                <RadioButton value={'ACTIVE'}>
+                    <Text>在线</Text>
+                </RadioButton>
+
+                <RadioButton value={'UNREACHABLE'}>
+                    <Text>失联</Text>
+                </RadioButton>
+                <RadioButton value={'INACTIVE'}>
+                    <Text>离线</Text>
+                </RadioButton>
+                <RadioButton value={'REMOVED'}>
+                    <Text>移除</Text>
+                </RadioButton>
+            </RadioGroup>
+
+        </View>
+
+
+
         let searchView = <View
             style={{flexDirection: 'row', height: 50, backgroundColor: 'blue', padding: 5, alignItems: 'center'}}>
             <TextInput style={{
@@ -151,7 +192,7 @@ export default class DevicesPage extends Component {
             </View>
         </View>
 
-        let listView = <ListView
+        let listView = <View style={{minHeight:70}}><ListView
             dataSource={this.state.dataSource}
             enableEmptySections={true}
             renderRow={(data) => this._renderRow(data)}
@@ -169,7 +210,6 @@ export default class DevicesPage extends Component {
                     onRefresh={() => {
                         this.offset = 0;
                         this.data = [];
-
                         this.loadData()
                     }}
                     colors={['blue']}
@@ -177,14 +217,15 @@ export default class DevicesPage extends Component {
                     titleColor={'blue'}
                     title={'Loading'}
                 />}
-        />
+        /></View>
         let emptyView = this.data.length === 0 ?
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}><Image
                 source={require('../../res/imgs/ic_nodata.png')}
                 style={{width: 200, height: 200,}}/><Text>暂时没有数据呐！</Text></View> : null;
         return (
-            <View style={{flex: 1,marginBottom:50}}>
+            <View style={{flex: 1,marginBottom:150}}>
                 {searchView}
+                {radioGroupView}
                 {listView}
                 {emptyView}
             </View>
