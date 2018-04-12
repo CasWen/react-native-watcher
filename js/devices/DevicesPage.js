@@ -130,7 +130,8 @@ export default class DevicesPage extends Component {
                 <View style={[{flex: 1, flexDirection: 'row', padding: 5}, styles.card]} key={obj.id}>
                     <View style={{flex: 1, paddingLeft: 5}}>
                         <Text style={{fontSize: 16}}
-                              numberOfLines={1}>{obj.id+"---"+obj.properties[2].value + "---" + obj.name}</Text>
+                              numberOfLines={1}>{"总数:"+this.dataCount+"---设备:"+obj.name}</Text>
+                        <Text style={{fontSize: 12, marginTop: 5}}>{"IMEI:"+obj.properties[2].value}</Text>
                         <Text style={{fontSize: 8, marginTop: 5}}>{obj.enrolmentInfo.status}</Text></View>
                     <Image style={{width: 40, height: 40, resizeMode: 'center'}}
                            source={require('../../res/imgs/ic_no_pic.png')}/>
