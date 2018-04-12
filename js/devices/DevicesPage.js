@@ -27,7 +27,7 @@ export default class DevicesPage extends Component {
         this.pageSize = 10;
         this.dataCount = 0;
         this.data = [];
-        this.deviceStatus='';
+        this.deviceStatus = '';
     }
 
     componentDidMount() {
@@ -47,17 +47,9 @@ export default class DevicesPage extends Component {
             });
         }
         NativeModules.netModule.log("loadData", "_that.offset" + _that.offset)
-        NativeModules.netModule.loadDevices(_that.offset, _that.pageSize, _that.state.searchTxt, _that.deviceStatus).then((response) =>
-            JSON.parse(response)
-        ).catch((error) => {
-            alert("catch" + error)
-        }).then((responseData) => {
-            if (responseData === 'response is not json') {
-                _that.setState({
-                    isLoading: false,
-                })
-                return
-            }
+
+        NativeModules.netModule.loadDevices(_that.offset, _that.pageSize, _that.state.searchTxt, _that.deviceStatus).then((response) => {
+            var responseData = JSON.parse(response)
             NativeModules.netModule.log("loadData", "responseData.count=" + responseData.count);
             NativeModules.netModule.log("loadData", "responseData.devices.length=" + responseData.devices.length);
             this.dataCount = responseData.count;
@@ -69,38 +61,13 @@ export default class DevicesPage extends Component {
                 dataSource: this.state.dataSource.cloneWithRows(this.data),
                 isLoading: false,
             })
+        }).catch((error) => {
+            alert(error)
+            _that.setState({
+                isLoading: false,
+            })
 
-        })
-            .catch((error) => {
-                alert('error:' + error)
-                _that.setState({
-                    isLoading: false,
-                })
-
-            });
-
-
-        // let timestamp = Date.parse(new Date());
-        // var m = "c10c6e8165154e52aea8d3750c6cda5b" + timestamp + "SURDaAqDJRgkDCHG";
-        // let signature = MD5.hex_md5(m);
-        // fetch('http://api.xinwen.cn/news/hot?size=100&access_key=SURDaAqDJRgkDCHG&signature=' + signature + '&timestamp=' + timestamp, {
-        //     method: 'GET'
-        // })
-        //     .then((response) => response.json())
-        //     .then((responseData) => {
-        //         _that.setState({
-        //             success: responseData.success,
-        //             data: responseData.data.news,
-        //             dataSource: this.state.dataSource.cloneWithRows(responseData.data.news),
-        //             isLoading: false,
-        //         });
-        //     })
-        //     .catch((error) => {
-        //         alert(error)
-        //         _that.setState({
-        //             isLoading: false,
-        //         })
-        //     });
+        });
     }
 
     onItemClick(url) {
@@ -130,8 +97,8 @@ export default class DevicesPage extends Component {
                 <View style={[{flex: 1, flexDirection: 'row', padding: 5}, styles.card]} key={obj.id}>
                     <View style={{flex: 1, paddingLeft: 5}}>
                         <Text style={{fontSize: 16}}
-                              numberOfLines={1}>{"总数:"+this.dataCount+"---设备:"+obj.name}</Text>
-                        <Text style={{fontSize: 12, marginTop: 5}}>{"IMEI:"+obj.properties[2].value}</Text>
+                              numberOfLines={1}>{"总数:" + this.dataCount + "---设备:" + obj.name}</Text>
+                        <Text style={{fontSize: 12, marginTop: 5}}>{"IMEI:" + obj.properties[2].value}</Text>
                         <Text style={{fontSize: 8, marginTop: 5}}>{obj.enrolmentInfo.status}</Text></View>
                     <Image style={{width: 40, height: 40, resizeMode: 'center'}}
                            source={require('../../res/imgs/ic_no_pic.png')}/>
@@ -140,21 +107,21 @@ export default class DevicesPage extends Component {
         )
     }
 
-    _onSelect(index,value){
-        this.deviceStatus=value;
+    _onSelect(index, value) {
+        this.deviceStatus = value;
         this.offset = 0;
         this.data = [];
         this.loadData(true)
     }
 
     render() {
-        let radioGroupView=<View>
+        let radioGroupView = <View>
             <RadioGroup
-                onSelect = {(index, value) => this._onSelect(index, value)}
-                style={{flexDirection:'row',flexWrap:'wrap'}}
+                onSelect={(index, value) => this._onSelect(index, value)}
+                style={{flexDirection: 'row', flexWrap: 'wrap'}}
                 selectedIndex={0}
             >
-                <RadioButton value={''} >
+                <RadioButton value={''}>
                     <Text>全部</Text>
                 </RadioButton>
 
@@ -176,7 +143,6 @@ export default class DevicesPage extends Component {
         </View>
 
 
-
         let searchView = <View
             style={{flexDirection: 'row', height: 50, backgroundColor: 'blue', padding: 5, alignItems: 'center'}}>
             <TextInput style={{
@@ -193,7 +159,7 @@ export default class DevicesPage extends Component {
             </View>
         </View>
 
-        let listView = <View style={{minHeight:70}}><ListView
+        let listView = <View style={{minHeight: 70}}><ListView
             dataSource={this.state.dataSource}
             enableEmptySections={true}
             renderRow={(data) => this._renderRow(data)}
@@ -224,7 +190,7 @@ export default class DevicesPage extends Component {
                 source={require('../../res/imgs/ic_nodata.png')}
                 style={{width: 200, height: 200,}}/><Text>暂时没有数据呐！</Text></View> : null;
         return (
-            <View style={{flex: 1,marginBottom:150}}>
+            <View style={{flex: 1, marginBottom: 150}}>
                 {searchView}
                 {radioGroupView}
                 {listView}

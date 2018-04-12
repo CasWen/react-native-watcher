@@ -12,7 +12,6 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.google.gson.Gson;
 import com.rn_watcher.response.DevicesResponse;
 import com.want.wso2.WSONet;
 import com.want.wso2.auth.Authenticator;
@@ -33,7 +32,7 @@ import static com.want.wso2.auth.Authenticator.SCOPES;
  */
 
 public class NetModule extends ReactContextBaseJavaModule {
-    final String ip = "http://10.0.35.8:8280";
+    final String ip = "http://wso2.hollywant.com:8280";
 
     public NetModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -106,7 +105,10 @@ public class NetModule extends ReactContextBaseJavaModule {
                     @Override
                     public void onFailure(String message, int code) {
                         Log.e(getName(), "onFailure:code=" + code + "--message:" + message);
-                        promise.reject(code + "", message);
+                        if(code==401)
+                            promise.reject(""+code);
+                        else
+                            promise.reject(message);
                     }
 
                     @Override
@@ -125,13 +127,17 @@ public class NetModule extends ReactContextBaseJavaModule {
             public void onSuccess(Response<DevicesResponse> response) {
                 final DevicesResponse devicesResponse = response.body();
                 Log.e(getName(), "onSuccess:" + devicesResponse.toJSON());
-                promise.resolve(devicesResponse.toJSON());
+                try{
+                    promise.resolve(devicesResponse.toJSON());
+                }catch (Exception e){
+                    promise.reject("response is not json");
+                }
             }
 
             @Override
             public void onError(Response<DevicesResponse> response) {
                 super.onError(response);
-                promise.reject(response.toString());
+                promise.reject(response.message());
             }
 
             @Override

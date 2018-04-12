@@ -88,31 +88,22 @@ export default class App extends Component {
             alert('请输入密码')
             return
         }
+
         NativeModules.netModule.login(this.state.name, this.state.pwd).then((response) => {
-                return JSON.parse(response);
-            }
-        ).catch((error) => {
-            alert("catch" + error)
-        }).then((responseData) => {
+            var responseData = JSON.parse(response);
             this.setState({
                 response: JSON.stringify(responseData),
                 access_token: responseData.access_token,
                 refresh_token: responseData.refresh_token,
             })
-            if (responseData === 'response is not json') {
-                return
-            }
             this.goMainPage();
-        })
-            .catch((error) => {
-                alert('error:' + error)
-
-            });
-
+        }).catch((error) => {
+            alert(error)
+        });
 
     }
 
-    goMainPage(){
+    goMainPage() {
         this.props.navigator.push({
             component: HomePage,
         })
