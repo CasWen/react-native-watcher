@@ -44,7 +44,7 @@ export default class App extends Component {
                 <Image source={{uri: 'https://vczero.github.io/ctrip/guo_1.jpg'}} style={styles.headerImage}/>
                 <TextInput placeholder={'请输入用户名'} style={styles.textInputStyle} value={this.state.vall}
                            onChangeText={this.getName.bind(this)}/>
-                <TextInput placeholder={'请输入密码'} password={true} style={styles.textInputStyle} value={this.state.vall}
+                <TextInput placeholder={'请输入密码'} secureTextEntry={true} style={styles.textInputStyle} value={this.state.vall}
                            onChangeText={this.getPwd.bind(this)}/>
                 <TouchableOpacity style={styles.loginBtnStyle} onPress={this.login.bind(this)}>
                     <Text style={{color: 'white'}}>登录</Text></TouchableOpacity>

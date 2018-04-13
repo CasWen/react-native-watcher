@@ -20,14 +20,15 @@ export default class DevicesPage extends Component {
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
             success: null,
             data: [],
-            isLoading: false,
+            showLoading: false,
             searchTxt: '',
         }
         this.offset = 0;
-        this.pageSize = 10;
+        this.pageSize = 25;
         this.dataCount = 0;
         this.data = [];
         this.deviceStatus = '';
+        this.isLoad=false;
     }
 
     componentDidMount() {
@@ -36,6 +37,7 @@ export default class DevicesPage extends Component {
 
     loadData(shouldShowLoading) {
         let _that = this;
+        _that.isLoad=true;
         // if (_that.state.searchTxt.length != 0) {
         //     this.doSearch();
         //     return;
@@ -43,12 +45,13 @@ export default class DevicesPage extends Component {
 
         if (shouldShowLoading) {
             _that.setState({
-                isLoading: true
+                showLoading: true
             });
         }
         NativeModules.netModule.log("loadData", "_that.offset" + _that.offset)
 
         NativeModules.netModule.loadDevices(_that.offset, _that.pageSize, _that.state.searchTxt, _that.deviceStatus).then((response) => {
+            _that.isLoad=false;
             var responseData = JSON.parse(response)
             NativeModules.netModule.log("loadData", "responseData.count=" + responseData.count);
             NativeModules.netModule.log("loadData", "responseData.devices.length=" + responseData.devices.length);
@@ -59,19 +62,19 @@ export default class DevicesPage extends Component {
             this.data = this.data.concat(responseData.devices);
             _that.setState({
                 dataSource: this.state.dataSource.cloneWithRows(this.data),
-                isLoading: false,
+                showLoading: false,
             })
         }).catch((error) => {
+            _that.isLoad=false;
             alert(error)
             _that.setState({
-                isLoading: false,
+                showLoading: false,
             })
 
         });
     }
 
     onItemClick(url) {
-        alert(this.data.length)
         // this.props.navigator.push({
         // })
     }
@@ -89,7 +92,17 @@ export default class DevicesPage extends Component {
 
     }
 
-    _renderRow(obj) {
+    _renderRow(obj,sectionID,rowID) {
+        let apps=[];
+        for(var i in obj.applications){
+            var text=(
+                <Text key={i} numberOfLines={1} style={{fontSize: 12, marginTop: 5}}>
+                    {decodeURI(obj.applications[i].name)+":"+obj.applications[i].version}
+                </Text>
+            );
+            apps.push(text)
+        }
+
         return (
             <TouchableOpacity onPress={() => {
                 this.onItemClick("TODO")
@@ -97,10 +110,10 @@ export default class DevicesPage extends Component {
                 <View style={[{flex: 1, flexDirection: 'row', padding: 5}, styles.card]} key={obj.id}>
                     <View style={{flex: 1, paddingLeft: 5}}>
                         <Text style={{fontSize: 16}}
-                              numberOfLines={1}>{"总数:" + this.dataCount + "---设备:" + obj.name}</Text>
+                              numberOfLines={1}>{(parseInt(rowID)+1)+"/" + this.dataCount + "---设备:" + obj.name}</Text>
                         <Text style={{fontSize: 12, marginTop: 5}}>{"IMEI:" + obj.properties[2].value}</Text>
-                        <Text style={{fontSize: 8, marginTop: 5}}>{obj.enrolmentInfo.status}</Text></View>
-                    <Image style={{width: 40, height: 40, resizeMode: 'center'}}
+                        <Text style={{fontSize: 8, marginTop: 5}}>{obj.enrolmentInfo.status}</Text>{apps}</View>
+                    <Image style={{width: 4, height: 4, resizeMode: 'center'}}
                            source={require('../../res/imgs/ic_no_pic.png')}/>
                 </View>
             </TouchableOpacity>
@@ -162,18 +175,19 @@ export default class DevicesPage extends Component {
         let listView = <View style={{minHeight: 70}}><ListView
             dataSource={this.state.dataSource}
             enableEmptySections={true}
-            renderRow={(data) => this._renderRow(data)}
+            renderRow={(data,sectionID,rowID) => this._renderRow(data,sectionID,rowID)}
             onEndReached={() => {
                 NativeModules.netModule.log("onEndReached", "offset=" + this.offset + "--dataCount=" + this.dataCount)
                 if (this.offset < this.dataCount) {
                     NativeModules.netModule.log("onEndReached", "this.offset=" + this.offset + "--this.dataCount=" + this.dataCount)
-                    this.loadData()
+                    if(!_that.isLoad)
+                        this.loadData()
                 }
             }}
-            onEndReachedThreshold={10}
+            onEndReachedThreshold={50}
             refreshControl={
                 <RefreshControl
-                    refreshing={this.state.isLoading}
+                    refreshing={this.state.showLoading}
                     onRefresh={() => {
                         this.offset = 0;
                         this.data = [];
