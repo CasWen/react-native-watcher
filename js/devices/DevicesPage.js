@@ -19,7 +19,6 @@ export default class DevicesPage extends Component {
         this.state = {
             dataSource: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
             success: null,
-            data: [],
             showLoading: false,
             searchTxt: '',
         }
@@ -29,6 +28,7 @@ export default class DevicesPage extends Component {
         this.data = [];
         this.deviceStatus = '';
         this.isLoad=false;
+        this.listLength=0;
     }
 
     componentDidMount() {
@@ -60,6 +60,7 @@ export default class DevicesPage extends Component {
             this.offset = this.offset + responseData.devices.length;
             NativeModules.netModule.log("loadData", "after plus this.offset" + this.offset);
             this.data = this.data.concat(responseData.devices);
+            this.listLength=this.data.length;
             _that.setState({
                 dataSource: this.state.dataSource.cloneWithRows(this.data),
                 showLoading: false,
@@ -180,7 +181,7 @@ export default class DevicesPage extends Component {
                 NativeModules.netModule.log("onEndReached", "offset=" + this.offset + "--dataCount=" + this.dataCount)
                 if (this.offset < this.dataCount) {
                     NativeModules.netModule.log("onEndReached", "this.offset=" + this.offset + "--this.dataCount=" + this.dataCount)
-                    if(!_that.isLoad)
+                    if(!this.isLoad)
                         this.loadData()
                 }
             }}
@@ -199,7 +200,7 @@ export default class DevicesPage extends Component {
                     title={'Loading'}
                 />}
         /></View>
-        let emptyView = this.data.length === 0 ?
+        let emptyView = this.listLength === 0 ?
             <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}><Image
                 source={require('../../res/imgs/ic_nodata.png')}
                 style={{width: 200, height: 200,}}/><Text>暂时没有数据呐！</Text></View> : null;
