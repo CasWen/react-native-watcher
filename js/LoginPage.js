@@ -36,6 +36,7 @@ export default class App extends Component {
             token_type: '',
             expires_in: '',
         }
+        this.isloading=false;
     }
 
     render() {
@@ -88,8 +89,17 @@ export default class App extends Component {
             alert('请输入密码')
             return
         }
+        if(this.isloading){
+            return
+        }else {
+            this.isloading=true;
+        }
+        this.setState({
+            response:'loading',
+        })
 
         NativeModules.netModule.login(this.state.name, this.state.pwd).then((response) => {
+            this.isloading=false;
             var responseData = JSON.parse(response);
             this.setState({
                 response: JSON.stringify(responseData),
@@ -98,7 +108,11 @@ export default class App extends Component {
             })
             this.goMainPage();
         }).catch((error) => {
+            this.isloading=false;
             alert(error)
+            this.setState({
+                response:'',
+            })
         });
 
     }

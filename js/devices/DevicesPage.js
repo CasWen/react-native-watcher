@@ -27,8 +27,8 @@ export default class DevicesPage extends Component {
         this.dataCount = 0;
         this.data = [];
         this.deviceStatus = '';
-        this.isLoad=false;
-        this.listLength=0;
+        this.isLoad = false;
+        this.listLength = 0;
     }
 
     componentDidMount() {
@@ -37,7 +37,7 @@ export default class DevicesPage extends Component {
 
     loadData(shouldShowLoading) {
         let _that = this;
-        _that.isLoad=true;
+        _that.isLoad = true;
         // if (_that.state.searchTxt.length != 0) {
         //     this.doSearch();
         //     return;
@@ -51,7 +51,7 @@ export default class DevicesPage extends Component {
         NativeModules.netModule.log("loadData", "_that.offset" + _that.offset)
 
         NativeModules.netModule.loadDevices(_that.offset, _that.pageSize, _that.state.searchTxt, _that.deviceStatus).then((response) => {
-            _that.isLoad=false;
+            _that.isLoad = false;
             var responseData = JSON.parse(response)
             NativeModules.netModule.log("loadData", "responseData.count=" + responseData.count);
             NativeModules.netModule.log("loadData", "responseData.devices.length=" + responseData.devices.length);
@@ -60,13 +60,13 @@ export default class DevicesPage extends Component {
             this.offset = this.offset + responseData.devices.length;
             NativeModules.netModule.log("loadData", "after plus this.offset" + this.offset);
             this.data = this.data.concat(responseData.devices);
-            this.listLength=this.data.length;
+            this.listLength = this.data.length;
             _that.setState({
                 dataSource: this.state.dataSource.cloneWithRows(this.data),
                 showLoading: false,
             })
         }).catch((error) => {
-            _that.isLoad=false;
+            _that.isLoad = false;
             alert(error)
             _that.setState({
                 showLoading: false,
@@ -93,12 +93,12 @@ export default class DevicesPage extends Component {
 
     }
 
-    _renderRow(obj,sectionID,rowID) {
-        let apps=[];
-        for(var i in obj.applications){
-            var text=(
+    _renderRow(obj, sectionID, rowID) {
+        let apps = [];
+        for (var i in obj.applications) {
+            var text = (
                 <Text key={i} numberOfLines={1} style={{fontSize: 12, marginTop: 5}}>
-                    {decodeURI(obj.applications[i].name)+":"+obj.applications[i].version}
+                    {decodeURI(obj.applications[i].name) + ":" + obj.applications[i].version}
                 </Text>
             );
             apps.push(text)
@@ -111,9 +111,8 @@ export default class DevicesPage extends Component {
                 <View style={[{flex: 1, flexDirection: 'row', padding: 5}, styles.card]} key={obj.id}>
                     <View style={{flex: 1, paddingLeft: 5}}>
                         <Text style={{fontSize: 16}}
-                              numberOfLines={1}>{(parseInt(rowID)+1)+"/" + this.dataCount + "---设备:" + obj.name}</Text>
-                        <Text style={{fontSize: 12, marginTop: 5}}>{"IMEI:" + obj.properties[2].value}</Text>
-                        <Text style={{fontSize: 8, marginTop: 5}}>{obj.enrolmentInfo.status}</Text>{apps}</View>
+                              numberOfLines={1}>{"IMEI:" + obj.properties[2].value + "   " + obj.enrolmentInfo.status + "   " + (parseInt(rowID) + 1) + "/" + this.dataCount}</Text>
+                        {apps}</View>
                     <Image style={{width: 4, height: 4, resizeMode: 'center'}}
                            source={require('../../res/imgs/ic_no_pic.png')}/>
                 </View>
@@ -132,7 +131,7 @@ export default class DevicesPage extends Component {
         let radioGroupView = <View>
             <RadioGroup
                 onSelect={(index, value) => this._onSelect(index, value)}
-                style={{flexDirection: 'row', flexWrap: 'wrap'}}
+                style={{flexDirection: 'row', flexWrap: 'nowrap'}}
                 selectedIndex={0}
             >
                 <RadioButton value={''}>
@@ -176,12 +175,12 @@ export default class DevicesPage extends Component {
         let listView = <View style={{minHeight: 70}}><ListView
             dataSource={this.state.dataSource}
             enableEmptySections={true}
-            renderRow={(data,sectionID,rowID) => this._renderRow(data,sectionID,rowID)}
+            renderRow={(data, sectionID, rowID) => this._renderRow(data, sectionID, rowID)}
             onEndReached={() => {
                 NativeModules.netModule.log("onEndReached", "offset=" + this.offset + "--dataCount=" + this.dataCount)
                 if (this.offset < this.dataCount) {
                     NativeModules.netModule.log("onEndReached", "this.offset=" + this.offset + "--this.dataCount=" + this.dataCount)
-                    if(!this.isLoad)
+                    if (!this.isLoad)
                         this.loadData()
                 }
             }}
