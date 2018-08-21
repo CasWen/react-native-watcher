@@ -32,7 +32,8 @@ import static com.want.wso2.auth.Authenticator.SCOPES;
  */
 
 public class NetModule extends ReactContextBaseJavaModule {
-    final String ip = "http://wso2.hollywant.com:8280";
+//    final String ip = "http://wso2.hollywant.com:8280";
+    final String ip = "http://iotprd.watergod.com.cn:8280";
 
     public NetModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -75,7 +76,7 @@ public class NetModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void login(String userName, String pwd, final Promise promise) {
-        UUID deviceId = UUID.nameUUIDFromBytes(DeviceUtils.getDeviceName(getCurrentActivity()).getBytes());
+//        UUID deviceId = UUID.nameUUIDFromBytes(DeviceUtils.getDeviceName(getCurrentActivity()).getBytes());
         RegistrationProfileRequest registrationProfileRequest = new RegistrationProfileRequest();
         registrationProfileRequest.setApplicationName("watcher_android_cdmf_android_867516026498102");
         registrationProfileRequest.setIsAllowedToAllDomains(false);
