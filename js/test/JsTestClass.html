@@ -1,0 +1,290 @@
+<html>
+<head>
+    <`>JS测试</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <style>
+        span{
+            color: red;
+        }
+    </style>
+
+    <style type="text/css">
+
+        table tr td,th{border:1px solid #000;color: red;}
+    </style>
+</head>
+<body>
+
+<input  onclick="myAlert()"  type="button"  value="点击我，弹出警告框" />
+<input  id="demo"  type="button"  value="点击我，显示 type 属性" />
+<div id="demo1" style="height:50px; width:250px; margin-top:10px; text-align:center; line-height:50px; background-color:#ccc;">
+    点击这里获取CSS样式
+</div>
+<div id="demo2" style="height:50px; width:250px; margin-top:10px; text-align:center; line-height:50px; background-color:#ccc;">
+    <div>这是一个新的节点</div>
+    <div>你好，欢迎来到旺旺集团</div>
+</div>
+
+<table>
+    <tr>
+        <td>用户名：</td>
+        <td><input id="demo_input1" type="text" /></td>
+    </tr>
+    <tr>
+        <td>密码：</td>
+        <td><input id="demo_input2" type="text" /></td>
+    </tr>
+    <tr>
+        <td colspan="2" align="center"><input id="demo_button1" type="button" value="设置Cookie" /></td>
+        <td colspan="2" align="center"><input id="demo_button2" type="button" value="获取Cookie" /></td>
+    </tr>
+</table>
+
+<input id="demo3" type="button" value="显示浏览器信息" />
+
+<div id="demo4">点击这里获取URL信息</div>
+<div id="demo5">跳转到百度首页</div>
+
+<p>
+    请输入用户名：<input type="text" id="demo6" />
+    <span id="result"></span>
+</p>
+
+
+<input id="demo7" type="button" value="点击这里显示this" />
+<script type="text/javascript">
+
+    /**
+     * 例1
+     */
+    function myAlert(){
+        alert("谢谢支持");
+    }
+
+    /**
+     * 例2
+     */
+    document.getElementById("demo").onclick=function(){
+        alert(this.getAttribute("type"));  //  this 指当前发生事件的HTML元素，这里是<div>标签
+    }
+
+   /**document.getElementById("demo").onclick=function(){
+        var demoParent=this.parentNode;
+        alert(
+            "父节点的名称是："+demoParent.nodeName+"\n"+
+            "父节点的类型是："+demoParent.nodeType
+        );
+    }
+*/
+    /**
+     * 例3
+     */
+   document.getElementById("demo").onclick=function(){
+       this.style.height = " 70px ";
+       this.style.lineHeight = " 70px ";
+       this.style.backgroundColor = " #000 ";
+       this.style.color=" #fff ";
+   }
+    /**
+     * 例4
+     */
+
+    document.getElementById("demo1").onclick=function(){
+        alert(
+            "高度："+this.style.height+"\n"+
+            "宽度："+this.style.width+"\n"+
+            "上边距："+this.style.marginTop+"\n"+
+            "对齐："+this.style.textAlign+"\n"+
+            "行高："+this.style.lineHeight+"\n"+
+            "背景颜色："+this.style.backgroundColor
+        );
+    }
+    /**
+     * 例5
+     */
+    document.getElementById("demo2").onclick=function(){
+        this.innerHTML="<div>这是新节点 1</div><div>这是新节点 2</div><div>这是新节点 3</div>";
+    }
+
+    document.getElementById("demo2").onclick=function(){
+        alert(this.innerHTML);
+    }
+
+    /**
+     * 例6
+     */
+    document.getElementById("demo_button1").onclick=function(){
+        var cookie_username="username="+escape(document.getElementById("demo_input1").value)+";"+
+            "expire="+((new Date()).getTime()+600*1000);
+        var cookie_password="password="+escape(document.getElementById("demo_input2").value)+";"+
+            "expire="+((new Date()).getTime()+600*1000);
+        document.cookie=cookie_username;
+        document.cookie=cookie_password;
+    }
+    document.getElementById("demo_button2").onclick=function(){
+        var cookieObj=getCookieObj();
+        alert(
+            "用户名："+unescape(cookieObj.username)+"\n"+
+            "密码："+unescape(cookieObj.password)
+        );
+    }
+
+    /**
+     * 例7
+     */
+    document.getElementById("demo3").onclick=function(){
+        alert(
+            "浏览器信息：\n"+
+            "名称："+navigator.appName+"\n"+
+            "平台和版本："+navigator.appVersion+"\n"+
+            "操作系统："+navigator.platform+"\n"+
+            "userAgent："+navigator.userAgent
+        );
+    }
+
+    /**
+     * 例8
+     */
+    document.getElementById("demo4").onclick=function(){
+        alert(
+            "当前URL信息：\n"+
+            "URL："+location.href+"\n"+
+            "域名："+location.host+"\n"+
+            "主域名："+location.hostname+"\n"+
+            "路径："+location.pathname+"\n"+
+            "协议："+location.protocol
+        );
+    }
+    document.getElementById("demo5").onclick=function(){
+        location.href="http://www.baidu.com";
+        // frames.alert();
+        // document.html.constructor;
+        // history.back();
+        // navigator.authentication;
+        // screen.availWidth;
+    }
+
+    /**
+     * 例9
+     */
+    var xmlhttp;
+    // 创建 XMLHttpRequest 对象
+    try{
+        // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }catch(e){
+        // code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    // 初始化请求参数
+    xmlhttp.open("GET","/demo/javascript/ajax/ajaxDemo.php?action=getIP",true);
+    // 发送请求
+    xmlhttp.send();
+
+    /**
+     * 例10
+     */
+
+    document.getElementById("demo6").onblur=function(){  // 输入框失去焦点
+        var thisNode=this;
+        var span=document.getElementById("result");
+        var xmlhttp;
+        try{
+            // code for IE7+, Firefox, Chrome, Opera, Safari
+            xmlhttp=new XMLHttpRequest();
+        }catch(e){
+            // code for IE6, IE5
+            xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        xmlhttp.onreadystatechange=function(){
+            if(xmlhttp.readyState<4){  // 正在交互
+                span.style.color="blue";
+                span.innerHTML="正在检测...";
+            }
+            if (xmlhttp.readyState==4 && xmlhttp.status==200){  // 请求成功
+                if(parseInt(xmlhttp.responseText)){  // 将服务器返回的数据转换为整数
+                    span.style.color="red";
+                    span.innerHTML="抱歉，您填写的用户名已经存在！";
+                }else{
+                    span.style.color="green";
+                    span.innerHTML="恭喜你，填写正确！";
+                }
+            }
+        }
+        xmlhttp.open("POST","/demo/javascript/ajax/ajaxDemo.php?action=checkUserName",true);
+        xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+        xmlhttp.send("username="+thisNode.value);
+    }
+
+
+    /**
+     * 例11
+     * AJAX的网络异步请求
+     */
+
+    var xmlhttp;  // XMLHttpRequest 对象
+    try{  // code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+    }catch(e){  // code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlhttp.onreadystatechange=function(){  // 事件处理函数
+        if (xmlhttp.readyState==4 && xmlhttp.status==200){
+            // 这里写你的代码，可以使用 responseText 接收返回的数据
+        }
+    }
+    xmlhttp.open(POST/GET,url,true);  // 选择发送方式，确定 url
+    xmlhttp.send(data);  // POST 方式发送的数据，GET 方式留空
+
+    /**
+     * 例12
+     */
+    document.getElementById("demo7").onclick = function(){
+        alert(this);  // 显示 [object HTMLInputElement]
+    }
+
+    /**
+     * 例13
+     */
+    var arr = [1,2,3,4,5,6,7];
+    var sum = 0;
+    for (var i = 0, l = arr.length; i < l; i++)
+    {
+        sum += arr[i];
+    }
+
+</script>
+
+
+<p><span>1922年的春天</span>，一个想要成名名叫尼克•卡拉威（托比•马奎尔Tobey Maguire 饰）的作家，<em><strong>离开了美国中西</strong>离开了美国中西</em>离开了美国中西部，来到了纽约。那是一个道德感渐失，爵士乐流行，走私为王，股票飞涨的时代。为了追寻他的美国梦，他搬入纽约附近一海湾居住。</p>
+<p>菲茨杰拉德，二十世纪美国文学巨擘之一，兼具作家和编剧双重身份。<span style='color:blue'>美国梦</span>他以诗人的敏感和戏剧家的想象为"爵士乐时代"吟唱华丽挽歌，其诗人和梦想家</p>
+
+<table summary="">
+    <span>
+
+
+    <tr>
+        <th>班级</th>
+        <th>学生数</th>
+        <th>平均成绩</th>
+    </tr>
+    <tr>
+        <td>一班</td>
+        <td>30</td>
+        <td>89</td>
+    </tr>
+    <tr>
+        <td>二班</td>
+        <td>35</td>
+        <td>85</td>
+    </tr>
+    <tr>
+        <td>三班</td>
+        <td>32</td>
+        <td>80</td>
+    </tr>
+         </span>
+</table>
+
+</body>
+</html>

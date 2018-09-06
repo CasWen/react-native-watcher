@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>变量</title>
+    <script src="Learnjs.js" type="text/javascript">
+
+
+    </script>
+</head>
+<body>
+  <br>欢迎学习JavaScript。<br>
+
+<input type="text" id="text1"/>
+<select id="select">
+    <option value="+">+</option>
+    <option value="-">-</option>
+    <option value="*">*</option>
+    <option value="/">/</option>
+</select>
+  <input type="text" id="text2"/>
+  <input type="button" value="=" onclick="count()"/>
+  <input type="text" id="into"/>
+  <form>
+      <input type="text" id="clock" size="50"  />
+      <input type="button" value="Stop" onclick="clearInterval(i)" /><br>
+
+      <input type="text" id="count" />
+      <input type="button" value ="start"  onClick ="startCount()" /><br>
+
+      <input type="text" id="count2" />
+      <input type="button" value="Start" onclick="startCount2()" />
+      <input type="button" value="Stop" onclick="stopCount2()"  />
+  </form>
+
+  <!--<span id="t1"></span>秒后回到主页<a href="#" onclick="Tback();">返回</a>-->
+  <a href="#" onclick="lll()">更新</a>
+  <ul>
+      <li title="JS">JavaScript</li>
+      <li title="JQ">JQuery</li>
+      <li title="HTML">HTML/CSS</li>
+      <li title="JAVA">JAVA</li>
+      <li title="">PHP</li>
+  </ul>
+
+<script type="text/javascript">
+    var w=document.documentElement.scrollWidth || document.body.scrollWidth;
+    var h=document.documentElement.scrollHeight || document.body.scrollHeight;
+
+    document.write(w+"<br>"+h);
+
+
+</script>
+
+  <table border="1" width="50%" id="table">
+      <tr>
+          <th>学号</th>
+          <th>姓名</th>
+          <th>操作</th>
+      </tr>
+
+      <tr>
+          <td>xh001</td>
+          <td>王小明</td>
+          <td><a href="javascript:void (0);" onclick="del(this)">删除</a></td>   <!--在删除按钮上添加点击事件  -->
+      </tr>
+
+      <tr>
+          <td>xh002</td>
+          <td>刘小芳</td>
+          <td><a href="javascript:void (0);" onclick="del(this)">删除</a></td>   <!--在删除按钮上添加点击事件  -->
+      </tr>
+
+  </table>
+  <input type="button" value="添加一行"  onclick='add()'/>   <!--在添加按钮上添加点击事件  -->
+</body>
+
+
+</html>
