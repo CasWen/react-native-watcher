@@ -12,6 +12,8 @@ import DevicesPage from './devices/DevicesPage'
 import AppPage from './application/AppPage'
 import MinePage from './mine/MinePage'
 import ActivePage from './active/ActivePage'
+import MineMyCell from "./mine/MineMyCell";
+import My from "./mine/My";
 
 //需要导出的常量
 export const FLAG_TAB = {
@@ -72,7 +74,7 @@ export default class HomePage extends Component {
                     {this._renderTab(DevicesPage, FLAG_TAB.flag_DevicesTab, '设备', require('../res/imgs/ic_trending.png'))}
                     {this._renderTab(AppPage, FLAG_TAB.flag_AppTab, '应用', require('../res/imgs/ic_trending.png'))}
                     {this._renderTab(ActivePage, FLAG_TAB.flag_ActiveTab, '在线', require('../res/imgs/ic_news.png'))}
-                    {this._renderTab(MinePage, FLAG_TAB.flag_MineTab, '我的', require('../res/imgs/ic_my.png'))}
+                    {this._renderTab(My, FLAG_TAB.flag_MineTab, '我的', require('../res/imgs/ic_my.png'))}
 
 
                 </TabNavigator>
